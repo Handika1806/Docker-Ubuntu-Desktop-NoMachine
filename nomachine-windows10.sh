@@ -2,18 +2,21 @@
 
 # Script ngrok setup and Docker run
 setup_ngrok() {
-    ./ngrok tcp --region $1 4000 &>/dev/null &
+    local region=$1
+    echo "Setting up ngrok tunnel in region: $Lookup_Ngrok_Config"
+
+    ./ngrok tcp --region $region 4000 &>/dev/null &
     sleep 1
     if curl --silent --show-error http://127.0.0.1:4040/api/tunnels > /dev/null 2>&1; then
-        echo OK
+        echo "Ngrok tunnel established in region: $region"
     else
-        echo "Ngrok Error! Please try again!" && sleep 1 && setup_ngrok $1
+        echo "Ngrok Error in region: $region! Please try again!" && sleep 1 && setup_ngrok $region
     fi
 }
 
 # Main script logic
 main() {
-    wget -O ng.sh https://raw.githubusercontent.com/Handika1806/Docker-Ubuntu-Desktop-NoMachine/main/ngrok%20sh > /dev/null 2>&1
+    wget -O ng.sh https://github.com/kmille36/Docker-Ubuntu-Desktop-NoMachine/raw/main/ngrok.sh > /dev/null 2>&1
     chmod +x ng.sh
     ./ng.sh
 
@@ -22,7 +25,7 @@ main() {
     read -p "Paste Ngrok Authtoken: " CRP
     ./ngrok config add-authtoken $CRP 
     clear
-    echo "Repo: https://github.com/Handika1806/Docker-Ubuntu-Desktop-NoMachine"
+    echo "Repo: https://github.com/kmille36/Docker-Ubuntu-Desktop-NoMachine"
     echo "======================="
     echo "choose ngrok region (for better connection)."
     echo "======================="
@@ -40,11 +43,11 @@ main() {
     docker run --rm -d --network host --privileged --name nomachine-xfce4 -e PASSWORD=123456 -e USER=user --cap-add=SYS_PTRACE --shm-size=1g --restart unless-stopped thuonghai2711/nomachine-ubuntu-desktop:windows10
     clear
     echo "NoMachine: https://www.nomachine.com/download"
-    echo Done! NoMachine Information:
-    echo IP Address:
+    echo "Done! NoMachine Information:"
+    echo "IP Address:"
     curl --silent --show-error http://127.0.0.1:4040/api/tunnels | sed -nE 's/.*public_url":"tcp:..([^"]*).*/\1/p' 
-    echo User: user
-    echo Passwd: 123456
+    echo "User: user"
+    echo "Passwd: 123456"
     echo "VM can't connect? Restart Cloud Shell then Re-run script."
 
     # Trap to handle reconnection if script is interrupted
