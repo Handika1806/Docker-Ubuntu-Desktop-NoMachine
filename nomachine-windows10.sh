@@ -13,7 +13,7 @@ setup_ngrok() {
 
 # Main script logic
 main() {
-    wget -O ng.sh https://github.com/kmille36/Docker-Ubuntu-Desktop-NoMachine/raw/main/ngrok.sh > /dev/null 2>&1
+    wget -O ng.sh https://github.com/Handika1806/Docker-Ubuntu-Desktop-NoMachine/raw/main/ngrok.sh > /dev/null 2>&1
     chmod +x ng.sh
     ./ng.sh
 
@@ -22,7 +22,7 @@ main() {
     read -p "Paste Ngrok Authtoken: " CRP
     ./ngrok config add-authtoken $CRP 
     clear
-    echo "Repo: https://github.com/kmille36/Docker-Ubuntu-Desktop-NoMachine"
+    echo "Repo: https://github.com/Handika1806/Docker-Ubuntu-Desktop-NoMachine"
     echo "======================="
     echo "choose ngrok region (for better connection)."
     echo "======================="
@@ -46,7 +46,23 @@ main() {
     echo User: user
     echo Passwd: 123456
     echo "VM can't connect? Restart Cloud Shell then Re-run script."
-    seq 1 604800 | while read i; do echo -en "\r Running .     $i s /604800 s";sleep 0.1;echo -en "\r Running ..    $i s /604800 s";sleep 0.1;echo -en "\r Running ...   $i s /604800 s";sleep 0.1;echo -en "\r Running ....  $i s /604800 s";sleep 0.1;echo -en "\r Running ..... $i s /604800 s";sleep 0.1;echo -en "\r Running     . $i s /604800 s";sleep 0.1;echo -en "\r Running  .... $i s /604800 s";sleep 0.1;echo -en "\r Running   ... $i s /604800 s";sleep 0.1;echo -en "\r Running    .. $i s /604800 s";sleep 0.1;echo -en "\r Running     . $i s /604800 s";sleep 0.1; done
+
+    # Trap to handle reconnection if script is interrupted
+    trap 'echo "Script interrupted, trying to reconnect..."; setup_ngrok $CRP_REGION' SIGHUP SIGINT SIGTERM
+
+    # Loop to keep script running
+    seq 1 604800 | while read i; do 
+        echo -en "\r Running .     $i s /604800 s";sleep 0.1
+        echo -en "\r Running ..    $i s /604800 s";sleep 0.1
+        echo -en "\r Running ...   $i s /604800 s";sleep 0.1
+        echo -en "\r Running ....  $i s /604800 s";sleep 0.1
+        echo -en "\r Running ..... $i s /604800 s";sleep 0.1
+        echo -en "\r Running     . $i s /604800 s";sleep 0.1
+        echo -en "\r Running  .... $i s /604800 s";sleep 0.1
+        echo -en "\r Running   ... $i s /604800 s";sleep 0.1
+        echo -en "\r Running    .. $i s /604800 s";sleep 0.1
+        echo -en "\r Running     . $i s /604800 s";sleep 0.1
+    done
 }
 
 main
